@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>二维码工具</title>
+		<link rel="stylesheet" type="text/css" href="./css/main.css" />
+		<script src="./js/jquery.js"></script>
+		<script src="./js/qrcode.js"></script>
+		<script src="./js/jimp.js"></script>
+		<script src="./js/jsqr.min.js"></script>
+		<script src="./js/base.js"></script>
+		<script src="./js/main.js"></script>
+	</head>
+	<body>
+		<h1 class="logo">二维码工具</h1>
+		<hr>
+		<menu class="menu" id="menu">
+			<nav class="active" tar="create">二维码生成</nav> |
+			<nav tar="reader">二维码识别</nav>
+		</menu>
+		<hr>
+		<main class="main">
+			<aside class="create">
+				<input type="text" id="code" placeholder="请在这里输入要生成的内容！" />
+				<br>
+				<input type="button" value="生成" onclick="create()" />
+				<input type="button" value="全屏" onclick="fullscreen()" />
+				<input type="button" value="下载" onclick="download()" />
+				<div class="qrcode" id="qrcode"></div>
+
+			</aside>
+			<aside class="reader">
+				<button class="sweep" onclick="sweep()">扫一扫</button>
+				<button class="sweep">
+					<input type="file" id="file" onchange="upload()" />
+					从相册选择
+				</button>
+				<button class="sweep" onclick="copy()">复制结果</button>
+				<div class="imgurl" style="display: none;">
+					<img id="imgurl" alt="当前识别的二维码" />
+				</div>
+				<br>
+				<div class="result_url">
+					URL(自动跳转
+					<input type="checkbox" id="url_auto_jump" class="egg_setting_switch"/>
+					)
+					<span></span>
+				</div>
+				<textarea class="result" id="result" cols="32" rows="6" readonly placeholder="二维码识别结果！"></textarea>
+				<canvas class="canvas" id="canvas"></canvas>
+			</aside>
+		</main>
+	</body>
+</html>
