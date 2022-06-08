@@ -93,7 +93,7 @@ $("body").ready(() => {
 			if (/^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*$/i
 				.test(res.data.trim()) && !/javascript:|js:/i.test(res.data)) {
 				$(".main .reader .result_url span").html(
-					`<a target="_blank" href="${res.data.trim()}">${res.data.trim()}</a>`);
+					`<a target="${uQuery.autoClose==="on"?"_self":"_blank"}" href="${res.data.trim()}">${res.data.trim()}</a>`);
 				if ($("#url_auto_jump").prop("checked")) {
 					$(".main .reader .result_url a")[0].click();
 				}
