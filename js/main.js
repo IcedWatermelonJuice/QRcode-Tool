@@ -2,13 +2,16 @@ var uQuery = location.search ? location.search.replace("?", "").split("&") : [],
 	temp = {},
 	qrcode, QrCode;
 /*
- *预处理
+ *query请求预处理
  */
 uQuery.forEach((e) => {
 	e = e.split("=");
 	temp[e[0]] = e[1];
 })
 uQuery = temp;
+if (uQuery.darkMode === "true") {
+	$("html").addClass("dark")
+}
 
 /*
  *功能函数
@@ -25,13 +28,25 @@ function fullscreen() {
 	$("hr").hide();
 	$("aside.create input").hide();
 	$("#qrcode img").css({
-		"height": "min(calc(100vw - 130px),calc(100vh - 130px))",
-		"width": "min(calc(100vw - 130px),calc(100vh - 130px))"
+		"max-height": "unset",
+		"max-width": "unset",
+		"position": "absolute",
+		"top": "0",
+		"left": "0",
+		"bottom": "0",
+		"right": "0",
+		"margin": "auto"
 	})
 	$("#qrcode").click(() => {
 		$("#qrcode img").css({
-			"height": "",
-			"width": ""
+			"max-height": "",
+			"max-width": "",
+			"position": "",
+			"top": "",
+			"left": "",
+			"bottom": "",
+			"right": "",
+			"margin": ""
 		})
 		$(".logo").show();
 		$(".menu").show();
@@ -43,7 +58,7 @@ function fullscreen() {
 //下载
 function download() {
 	if ($("#qrcode img")[0]) {
-		$(`<a download="qrcode.png" href="${$("#qrcode img")[0].src}"></a>`)[0].click();
+		$(`<a download="qrcode.png" href="${$("#qrcode canvas")[0].toDataURL("image/png")}"></a>`)[0].click();
 	} else {
 		alert("二维码不存在");
 	}
@@ -93,7 +108,8 @@ $("body").ready(() => {
 			if (/^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*$/i
 				.test(res.data.trim()) && !/javascript:|js:/i.test(res.data)) {
 				$(".main .reader .result_url span").html(
-					`<a target="${uQuery.autoClose==="on"?"_self":"_blank"}" href="${res.data.trim()}">${res.data.trim()}</a>`);
+					`<a target="${uQuery.autoClose==="true"?"_self":"_blank"}" href="${res.data.trim()}">${res.data.trim()}</a>`
+				);
 				if ($("#url_auto_jump").prop("checked")) {
 					$(".main .reader .result_url a")[0].click();
 				}
@@ -109,15 +125,15 @@ $("body").ready(() => {
 		$(`aside:not(.${e.attr("tar")})`).hide();
 		$(`aside.${e.attr("tar")}`).show()
 	})
-	$("#url_auto_jump").prop("checked", localStorage.getItem("url_auto_jump") === "on" ? true : false);
+	$("#url_auto_jump").prop("checked", localStorage.getItem("url_auto_jump") === "true" ? true : false);
 	$("#url_auto_jump").click(() => {
-		localStorage.setItem("url_auto_jump", $("#url_auto_jump").prop("checked") ? "on" : "off");
+		localStorage.setItem("url_auto_jump", $("#url_auto_jump").prop("checked"));
 	})
 	if (uQuery.url) {
 		uQuery.url = decodeURIComponent(uQuery.url);
 		$("#code").val(uQuery.url);
 		create();
-		if (uQuery.fullscreen) {
+		if (uQuery.fullscreen==="true") {
 			fullscreen();
 		}
 	} else if (uQuery.mode) {
@@ -126,7 +142,7 @@ $("body").ready(() => {
 		} else if (uQuery.mode === "reader" || uQuery.mode === "scan") {
 			$("nav[tar=reader]").click();
 			if (uQuery.autoJump) {
-				$("#url_auto_jump").prop("checked", uQuery.autoJump === "on" ? true : false);
+				$("#url_auto_jump").prop("checked", uQuery.autoJump === "true" ? true : false);
 			}
 			if (uQuery.mode === "scan") {
 				sweep();
