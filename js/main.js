@@ -9,8 +9,8 @@ uQuery.forEach((e) => {
 	temp[e[0]] = e[1];
 })
 uQuery = temp;
-if (uQuery.darkMode === "true") {
-	$("html").addClass("dark")
+if (uQuery.darkMode === "true" || (uQuery.darkMode === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+	$("html").addClass("dark");
 }
 
 /*
@@ -133,7 +133,7 @@ $("body").ready(() => {
 		uQuery.url = decodeURIComponent(uQuery.url);
 		$("#code").val(uQuery.url);
 		create();
-		if (uQuery.fullscreen==="true") {
+		if (uQuery.fullscreen === "true") {
 			fullscreen();
 		}
 	} else if (uQuery.mode) {
