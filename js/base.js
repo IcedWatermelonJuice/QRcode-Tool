@@ -48,7 +48,6 @@
 			cancelAnimationFrame(this.timer);
 			setTimeout(() => {
 				this.cvsele.style.display = "none";
-				this.release();
 			}, 1000);
 		};
 		
@@ -74,7 +73,6 @@
 						this.draw(loc.bottomRightCorner, loc.bottomLeftCorner);
 						this.draw(loc.bottomLeftCorner, loc.topLeftCorner);
 						if (this.result != obj.data) {
-							this.audio.play();
 							this.cance();
 							this.success(obj);
 						}
@@ -164,7 +162,6 @@
 					} = res.bitmap;
 					try {
 						const resolve = await jsQR(data, width, height);
-						this.audio.play();
 						this.success(resolve);
 					} catch (err) {
 						this.error("识别失败，请检查二维码是否正确！", err);

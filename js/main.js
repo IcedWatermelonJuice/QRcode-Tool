@@ -1,3 +1,4 @@
+var testData=null;
 var uQuery = location.search ? location.search.replace("?", "").split("&") : [],
 	temp = {},
 	qrcode, QrCode;
@@ -59,6 +60,7 @@ function sweep() {
 	$("#canvas").click(() => {
 		changeURL("");
 		QrCode.cance();
+		QrCode.release();
 		$(".canvas-bg").hide();
 		$("#canvas").unbind("click");
 	})
@@ -119,6 +121,7 @@ $("body").ready(() => {
 		},
 		success: function(res) {
 			// 识别成功反馈
+			$("#canvas").click();
 			$("#result").val(res.data);
 			if (/^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*$/i
 				.test(res.data.trim()) && !/javascript:|js:/i.test(res.data)) {
