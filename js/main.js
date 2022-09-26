@@ -9,7 +9,8 @@ uQuery.forEach((e) => {
 	temp[e[0]] = e[1];
 })
 uQuery = temp;
-if (uQuery.darkMode === "true" || (uQuery.darkMode === "auto" && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+if (uQuery.darkMode === "true" || (uQuery.darkMode === "auto" && window.matchMedia("(prefers-color-scheme: dark)")
+		.matches)) {
 	$("html").addClass("dark");
 }
 
@@ -23,31 +24,17 @@ function create() {
 };
 //全屏
 function fullscreen() {
+	changeURL("qrcode");
 	$(".logo").hide();
 	$(".menu").hide();
 	$("hr").hide();
 	$("aside.create input").hide();
-	$("#qrcode img").css({
-		"max-height": "unset",
-		"max-width": "unset",
-		"position": "absolute",
-		"top": "0",
-		"left": "0",
-		"bottom": "0",
-		"right": "0",
-		"margin": "auto"
-	})
+	$("#qrcode img").attr("fullscreen","");
+	$("#qrcode canvas").attr("fullscreen","");
 	$("#qrcode").click(() => {
-		$("#qrcode img").css({
-			"max-height": "",
-			"max-width": "",
-			"position": "",
-			"top": "",
-			"left": "",
-			"bottom": "",
-			"right": "",
-			"margin": ""
-		})
+		changeURL("");
+		$("#qrcode img").removeAttr("fullscreen");
+		$("#qrcode canvas").removeAttr("fullscreen");
 		$(".logo").show();
 		$(".menu").show();
 		$("hr").show();
@@ -65,11 +52,15 @@ function download() {
 }
 // 扫一扫
 function sweep() {
+	changeURL("scan");
 	$("#result").val('');
 	QrCode.sweep();
+	$(".canvas-bg").show();
 	$("#canvas").click(() => {
+		changeURL("");
 		QrCode.cance();
-		$("#canvas").unbind("click")
+		$(".canvas-bg").hide();
+		$("#canvas").unbind("click");
 	})
 };
 // 从相册选择
@@ -83,6 +74,30 @@ function copy() {
 	document.execCommand("Copy");
 	alert("已复制到剪贴板");
 }
+// 更改地址栏URL参数
+function changeParam(param, value, url) {
+	url = url || location.href;
+	var reg = new RegExp("(^|)" + param + "=([^&]*)(|$)");
+	var tmp = param + "=" + value;
+	return url.match(reg) ? url.replace(eval(reg), tmp) : url.match("[?]") ? url + "&" + tmp : url +
+		"?" + tmp;
+}
+function changeURL(page){
+	if(page){
+		history.pushState(null, document.title, changeParam("page", page));
+	}else{
+		history.replaceState(null, document.title, location.origin + location.pathname);
+	}
+}
+// 监听返回按钮
+window.addEventListener("popstate", function() {
+	if ($(".canvas-bg").is(":visible") && $("#canvas").is(":visible")) {
+		$("#canvas").click();
+	}
+	if($("#qrcode img[fullscreen]").is(":visible")||$("#qrcode canvas[fullscreen]").is(":visible")){
+		$("#qrcode").click();
+	}
+})
 /*
  *主程序
  */
@@ -102,7 +117,7 @@ $("body").ready(() => {
 			// 识别错误反馈
 			$("#result").val(err);
 		},
-		seuccess: function(res) {
+		success: function(res) {
 			// 识别成功反馈
 			$("#result").val(res.data);
 			if (/^https?:\/\/(([a-zA-Z0-9_-])+(\.)?)*(:\d+)?(\/((\.)?(\?)?=?&?[a-zA-Z0-9_-](\?)?)*)*$/i
@@ -110,7 +125,8 @@ $("body").ready(() => {
 				$(".main .reader .result_url span").html(
 					`<a target="${uQuery.autoClose==="true"?"_self":"_blank"}" href="${res.data.trim()}">${res.data.trim()}</a>`
 				);
-				if ($("#url_auto_jump").prop("checked")) {
+				if ($("#url_auto_jump").prop("checked") && !(RegExp(location.hostname, "i").test(res
+						.data) && /autoJump=true/i.test(res.data))) {
 					$(".main .reader .result_url a")[0].click();
 				}
 			} else {
